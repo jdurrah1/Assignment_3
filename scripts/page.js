@@ -62,6 +62,27 @@ $(document).ready( function() {
   //$(window).keydown(fireRocket);
   //$(window).keydown(createAsteroid);
 
+  //hide show settings panel 
+  $("#showHideSettings-button").click(function()
+  {
+      if ($("#showHideSettings-button").html() == 'Open Settings Panel')
+      { 
+        $("#showHideSettings-button").html('Close Settings Panel');
+        $(".settings").show();
+      }
+      else
+      {
+        $(".settings").hide();
+        $("#showHideSettings-button").html('Open Settings Panel');
+      }
+
+  });
+
+  $("#settingsSubmit-button").click(function()
+  {
+    $("#showHideSettings-button").trigger('click'); 
+  });
+  
   // Periodically check for collisions (instead of checking every position-update)
   setInterval( function() {
     checkCollisions();  // Remove elements if there are collisions

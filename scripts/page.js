@@ -85,6 +85,11 @@ $(document).ready( function() {
   $("#settingsSubmit-button").click(function()
   {
     $("#showHideSettings-button").trigger('click'); 
+    var lifes = parseInt($("#lives-box").val());
+    console.log("you enter " + lifes + " lives");
+    intializeLifes(lifes); 
+
+
   });
 
   intializeLifes();
@@ -95,10 +100,34 @@ $(document).ready( function() {
 });
 
 
-function intializeLifes(){
+function intializeLifes(e){
+
+  //remove all lifes
+  while(removeLife())
+  {
+
+  }
+
+  //check gups
+  if(gup("life")!=null)
+  {
+    if(gup("life")<0 | gup("life") >10) 
+    {
+      console.log("url parameter for life rejected")
+    }
+    else
+      lives = gup("life");
+  }
+  else if(e>0 & e <11)
+  {
+    lives = e; 
+  }
+  else
+  {
+    lives = 3; //default
+  }
 
   var i = 1; 
-
   while (i < lives)
   {
     addLife(); 
@@ -123,9 +152,17 @@ function addLife()
 
 function removeLife()
 {
-  var curLife = $('#l-'+lifeIdx);
-  curLife.remove(); 
-  lifeIdx--;
+  if(lifeIdx>0)
+  {
+    var curLife = $('#l-'+lifeIdx);
+    curLife.remove(); 
+    lifeIdx--;
+    return true; 
+  }
+  else
+  {
+    return false; 
+  }
 
 }
 
@@ -183,16 +220,21 @@ function checkCollisions() {
     var curAsteroid = $(this);
     if (isColliding(curAsteroid, ship)) {
       // Remove all game elements
-      ship.remove();
+      
       $('.rocket').remove();  // remove all rockets
       $('.asteroid').remove();  // remove all asteroids
 
-      // Hide primary windows
-      gwhGame.hide();
-      gwhStatus.hide();
+      if(!removeLife())
+      {
+        ship.remove();
 
-      // Show "Game Over" screen
-      gwhOver.show();
+        // Hide primary windows
+        gwhGame.hide();
+        gwhStatus.hide();
+
+        // Show "Game Over" screen
+        gwhOver.show();
+      }
     }
   });
 }

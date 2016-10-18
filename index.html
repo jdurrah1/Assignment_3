@@ -5,6 +5,7 @@
 <!-- JS -->
 <script src='scripts/jquery.min.js'></script>
 <script src='scripts/page.js'></script>
+<script src='scripts/gup.js'></script>
 
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="style/style.css">
@@ -39,15 +40,15 @@
       
       <button id="showHideSettings-button" type="submit" value="true" >Open Settings Panel</button>
 
-      <form class="settings" style='display:none;''>
+      <div class="settings" style='display:none;''>
       <hr>
             <p>Settings</p>
             <table width="100%">
               <tr>
-                <td>Setting 1</td>
+                <td>Lives</td>
                 <td>
                   <div>
-                    <input type="text" size="10" />
+                    <input id="lives-box" type="text" size="2" />
                       <span></span>
                   </div>
                 </td>
@@ -72,11 +73,11 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <input type="submit" value="Update" >
+                  <input id ="settingsSubmit-button" type="submit" value="Update" >
                 </td>
               </tr>
             </table>
-      </form>
+      </div>
     </div>
   </div>
 </body>

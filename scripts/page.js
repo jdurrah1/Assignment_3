@@ -3,9 +3,12 @@
 // Counters
 var rocketIdx = 1;
 var asteroidIdx = 1;
+var lifeIdx = 0;
 
 var rocketLauchedCounter = 0; 
 var asteroidsHitCounter = 0; 
+
+var lives = 3; 
 
 // Size Constants
 var MAX_ASTEROID_SIZE = 50;
@@ -20,7 +23,7 @@ var SCORE_UNIT = 100;  // scoring is in 100-point units
 var maxShipPosX, maxShipPosY;
 
 // Global Window Handles (gwh__)
-var gwhGame, gwhOver, gwhStatus, gwhScore, gwhAccuracy;
+var gwhGame, gwhOver, gwhStatus, gwhScore, gwhAccuracy,gwhLives;
 
 // Global Object Handles
 var ship;
@@ -51,6 +54,7 @@ $(document).ready( function() {
   gwhStatus = $('.status-window');
   gwhScore = $('#score-box');
   gwhAccuracy = $('#accuracy-box');
+  gwhLives = $('.lives-window')
   ship = $('#enterprise');  // set the global ship handle
 
   // Set global positions
@@ -82,13 +86,48 @@ $(document).ready( function() {
   {
     $("#showHideSettings-button").trigger('click'); 
   });
-  
+
+  intializeLifes();
   // Periodically check for collisions (instead of checking every position-update)
   setInterval( function() {
     checkCollisions();  // Remove elements if there are collisions
   }, 100);
 });
 
+
+function intializeLifes(){
+
+  var i = 1; 
+
+  while (i < lives)
+  {
+    addLife(); 
+    i++
+  }
+
+}
+
+function addLife()
+{
+    lifeIdx++;
+    var life = "<div id='l-" + lifeIdx + "' class='life'><img height='10px' src='img/fighter.png'/></div>";
+
+    gwhLives.append(life);
+    var curLife = $('#l-'+lifeIdx);
+
+    curLife.css('position', 'relative');
+    curLife.css('float', 'right');
+    
+
+}
+
+function removeLife()
+{
+  var curLife = $('#l-'+lifeIdx);
+  curLife.remove(); 
+  lifeIdx--;
+
+}
 
 function keydownRouter(e) {
   switch (e.which) {

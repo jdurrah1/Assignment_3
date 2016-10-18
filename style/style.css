@@ -5,6 +5,7 @@
   width: 500px;
   background: #eee;
   border: 5px solid #ccc;
+  
 }
 .game-window {
   height: 100%;
@@ -12,6 +13,7 @@
   background: #222;
   border-right: 3px solid #53f;
   float: left;
+  position:relative;
 }
 .status-window {
   height: 100%;
@@ -36,4 +38,13 @@
 }
 .asteroid {
   position: absolute;
+}
+
+.lives-window {
+  height: 11px;
+  width: 100%;
+  background:blue;
+  position: absolute;
+  top:0px;
+
 }

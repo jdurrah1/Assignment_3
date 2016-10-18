@@ -66,7 +66,17 @@ $(document).ready( function() {
   //$(window).keydown(fireRocket);
   //$(window).keydown(createAsteroid);
 
-  //hide show settings panel 
+
+
+  intializeLifes();
+  initializeAsteroidsAutoSpawn();
+
+  // Periodically check for collisions (instead of checking every position-update)
+  setInterval( function() {
+    checkCollisions();  // Remove elements if there are collisions
+  }, 100);
+
+    //hide show settings panel 
   $("#showHideSettings-button").click(function()
   {
       if ($("#showHideSettings-button").html() == 'Open Settings Panel')
@@ -82,23 +92,34 @@ $(document).ready( function() {
 
   });
 
+
   $("#settingsSubmit-button").click(function()
   {
     $("#showHideSettings-button").trigger('click'); 
     var lifes = parseInt($("#lives-box").val());
     console.log("you enter " + lifes + " lives");
+
+    var spawnInterval = parseInt($("#spawnInterval-box").val());
+    console.log("you enter spanning interval " + spawnInterval);
+
     intializeLifes(lifes); 
+    initializeAsteroidsAutoSpawn(lifes);
 
 
   });
-
-  intializeLifes();
-  // Periodically check for collisions (instead of checking every position-update)
-  setInterval( function() {
-    checkCollisions();  // Remove elements if there are collisions
-  }, 100);
 });
 
+
+function initializeAsteroidsAutoSpawn(e)
+{
+
+  if(e>=0.2 & e<=4)
+    setInterval(createAsteroid, 1000*e); 
+  else 
+    setInterval(createAsteroid, 1000); 
+
+
+}
 
 function intializeLifes(e){
 

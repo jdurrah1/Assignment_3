@@ -4,6 +4,9 @@
 var rocketIdx = 1;
 var asteroidIdx = 1;
 
+var rocketLauchedCounter = 0; 
+var asteroidsHitCounter = 0; 
+
 // Size Constants
 var MAX_ASTEROID_SIZE = 50;
 var MIN_ASTEROID_SIZE = 15;
@@ -17,7 +20,7 @@ var SCORE_UNIT = 100;  // scoring is in 100-point units
 var maxShipPosX, maxShipPosY;
 
 // Global Window Handles (gwh__)
-var gwhGame, gwhOver, gwhStatus, gwhScore;
+var gwhGame, gwhOver, gwhStatus, gwhScore, gwhAccuracy;
 
 // Global Object Handles
 var ship;
@@ -47,6 +50,7 @@ $(document).ready( function() {
   gwhOver = $('.game-over');
   gwhStatus = $('.status-window');
   gwhScore = $('#score-box');
+  gwhAccuracy = $('#accuracy-box');
   ship = $('#enterprise');  // set the global ship handle
 
   // Set global positions
@@ -97,6 +101,9 @@ function checkCollisions() {
 
       // For each rocket and asteroid, check for collisions
       if (isColliding(curRocket,curAsteroid)) {
+        asteroidsHitCounter++;
+        console.log("Asteroid #", asteroidsHitCounter, " Hit!");
+        
         // If a rocket and asteroid collide, destroy both
         curRocket.remove();
         curAsteroid.remove();
@@ -105,6 +112,7 @@ function checkCollisions() {
         var points = Math.ceil(MAX_ASTEROID_SIZE-curAsteroid.width()) * SCORE_UNIT;
         // Update the visible score
         gwhScore.html(parseInt($('#score-box').html()) + points);
+        gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100));
       }
     });
   });
@@ -205,7 +213,11 @@ function createAsteroid() {
 
 // Handle "fire" [rocket] events
 function fireRocket() {
-  console.log('Firing rocket...');
+  rocketLauchedCounter++;
+  console.log('Firing rocket...#', rocketLauchedCounter);
+
+  //update accuracy
+  gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100));
 
   // NOTE: source - https://www.raspberrypi.org/learning/microbit-game-controller/images/missile.png
   var rocketDivStr = "<div id='r-" + rocketIdx + "' class='rocket'><img src='img/rocket.png'/></div>";

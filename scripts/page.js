@@ -112,7 +112,7 @@ function checkCollisions() {
         var points = Math.ceil(MAX_ASTEROID_SIZE-curAsteroid.width()) * SCORE_UNIT;
         // Update the visible score
         gwhScore.html(parseInt($('#score-box').html()) + points);
-        gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100));
+        gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100) + "%");
       }
     });
   });
@@ -217,7 +217,7 @@ function fireRocket() {
   console.log('Firing rocket...#', rocketLauchedCounter);
 
   //update accuracy
-  gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100));
+  gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100) + "%");
 
   // NOTE: source - https://www.raspberrypi.org/learning/microbit-game-controller/images/missile.png
   var rocketDivStr = "<div id='r-" + rocketIdx + "' class='rocket'><img src='img/rocket.png'/></div>";

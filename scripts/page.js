@@ -43,6 +43,15 @@ var KEYS = {
   spacebar: 32
 }
 
+var SOUNDS = 
+{
+  rocketLaunch: 0;
+  shipAsteroidC:1;
+  gameOver:2;
+  intro:3;
+
+}
+
 var GameStates = 
 {
   notStated:0,
@@ -80,7 +89,7 @@ $(document).ready( function() {
 
 
  
-
+  playSound(SOUNDS.intro);
   // Periodically check for collisions (instead of checking every position-update)
   setInterval( function() {
     checkCollisions();  // Remove elements if there are collisions
@@ -170,7 +179,7 @@ function restartGame()
 
 //destroy any and all asteroids
 
-
+    playSound(SOUNDS.intro);
     gwhGame.show();
     gwhStatus.show();
     gwhSplash.show(); 
@@ -200,6 +209,25 @@ function restartGame()
     gwhAccuracy.html(0 + "%");
 }
 
+
+function playSound(e)
+{
+
+  switch (e)
+  {
+    case SOUNDS.rocketLaunch:
+     break;
+    case SOUNDS.shipAsteroidC:
+     break;
+    case SOUNDS.gameOver:
+     break;
+    case SOUNDS.intro:
+      break;
+    default:
+      console.log("incorrect sound"); 
+      break;
+  }
+}
 
 function initializeAsteroidsAutoSpawn(e)
 {
@@ -303,6 +331,8 @@ function removeLife()
 {
   if(lifeIdx>0)
   {
+    playSound(SOUNDS.shipAsteroidC); 
+
     var curLife = $('#l-'+lifeIdx);
     curLife.remove(); 
     lifeIdx--;
@@ -398,6 +428,8 @@ function gameOver()
     //add gameoverStates
     $("#final_Score").html($("#score-box").html());
     $("#final_Accuracy").html($("#accuracy-box").html());
+
+    playSound(SOUNDS.gameOver);
     
 
 
@@ -485,6 +517,8 @@ function createAsteroid() {
 function fireRocket() {
   if(gameState==GameStates.Started)
   {
+    playSound(SOUNDS.rocketLaunch);
+
     rocketLauchedCounter++;
     console.log('Firing rocket...#', rocketLauchedCounter);
 

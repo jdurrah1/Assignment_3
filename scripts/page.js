@@ -47,7 +47,7 @@ var GameStates =
 {
   notStated:0,
   Started:1, 
-  GameOver:2
+  gameOver:2
 }
 
 var gameState = GameStates.notStated; 
@@ -85,14 +85,17 @@ $(document).ready( function() {
     checkCollisions();  // Remove elements if there are collisions
   }, 100);
 
+  intializeLifes();
+  $(".life").hide(); 
+  initializeAsteroidsAutoSpawn();
 
   $("#startGame-button").click(function()
   {
     $(".splash-window").fadeOut(); 
-      intializeLifes();
-      initializeAsteroidsAutoSpawn();
+      
 
       gameState=GameStates.Started; 
+       $(".life").show(); 
 
   });
     //hide show settings panel 
@@ -123,6 +126,10 @@ $(document).ready( function() {
 
     intializeLifes(lifes); 
     initializeAsteroidsAutoSpawn(spawnInterval);
+
+    if(gameState!=GameStates.Started)
+      $(".life").hide(); 
+
 
   });
 
@@ -158,32 +165,33 @@ function initializeAsteroidsAutoSpawn(e)
 
 function randomSetIntervalForSpawn(e)
 {
+if(gameState==GameStates.Started)
+{
+    var halfInterval = e/2; 
+    var randomNumber = Math.random()*10;
+    var spawnInterval; 
 
-  var halfInterval = e/2; 
-  var randomNumber = Math.random()*10;
-  var spawnInterval; 
+    if(setIntervalIDSpawn !=0)
+    {
+      clearInterval(setIntervalIDSpawn);
+    }
 
-  if(setIntervalIDSpawn !=0)
-  {
-    clearInterval(setIntervalIDSpawn);
+    if(randomNumber >6)
+    {
+      spawnInterval= (e-halfInterval); 
+    }
+    else if (randomNumber >3)
+    {
+      spawnInterval = (e); 
+    }
+    else
+    {
+      spawnInterval= (e+halfInterval); 
+    }
+
+    setIntervalIDSpawn = setInterval(createAsteroid, 1000/(spawnInterval)); 
+    console.log("Spawn Interval: " + spawnInterval);
   }
-
-  if(randomNumber >6)
-  {
-    spawnInterval= (e-halfInterval); 
-  }
-  else if (randomNumber >3)
-  {
-    spawnInterval = (e); 
-  }
-  else
-  {
-    spawnInterval= (e+halfInterval); 
-  }
-
-  setIntervalIDSpawn = setInterval(createAsteroid, 1000/(spawnInterval)); 
-  console.log("Spawn Interval: " + spawnInterval);
-
 
 }
 
@@ -315,11 +323,12 @@ function checkCollisions() {
       {
         ship.remove();
 
-        // Hide primary windows
+       // Hide primary windows
         gwhGame.hide();
         gwhStatus.hide();
 
-        // Show "Game Over" screen
+        // Show "Game Over" screen.
+        gameState=GameStates.gameOver;
         gwhOver.show();
       }
     }

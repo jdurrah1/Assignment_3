@@ -25,7 +25,7 @@ var SCORE_UNIT = 100;  // scoring is in 100-point units
 var maxShipPosX, maxShipPosY;
 
 // Global Window Handles (gwh__)
-var gwhGame, gwhOver, gwhStatus, gwhScore, gwhAccuracy,gwhLives;
+var gwhGame, gwhOver, gwhStatus, gwhScore, gwhAccuracy,gwhLives,gwhSplash;
 
 // Global Object Handles
 var ship;
@@ -66,6 +66,7 @@ $(document).ready( function() {
   gwhAccuracy = $('#accuracy-box');
   gwhLives = $('.lives-window')
   ship = $('#enterprise');  // set the global ship handle
+  gwhSplash = $(".splash-window");
 
   // Set global positions
   maxShipPosX = gwhGame.width() - ship.width();
@@ -91,7 +92,7 @@ $(document).ready( function() {
 
   $("#startGame-button").click(function()
   {
-    $(".splash-window").fadeOut(); 
+      gwhSplash.fadeOut(); 
       
 
       gameState=GameStates.Started; 
@@ -144,7 +145,59 @@ $(document).ready( function() {
 
   });
 
+
+  $("#restart-button").click(function()
+    {
+      restartGame(); 
+    });
+
 });
+
+
+function restartGame()
+{
+//hide game over 
+
+//show game window and other hidden windows
+
+//change game state to not started
+
+//initializeAsteroidAutoSpawn()
+
+//initializeLifes
+
+//put ship into initial position
+
+//destroy any and all asteroids
+
+
+    gwhGame.show();
+    gwhStatus.show();
+    gwhSplash.show(); 
+
+    // Show "Game Over" screen.
+    gameState=GameStates.notStated;
+    gwhOver.hide();
+
+    intializeLifes();
+    $(".life").hide(); 
+    initializeAsteroidsAutoSpawn();
+
+    //shipe inoriginal position
+      ship.show(); 
+      ship.css('left', 122);
+      ship.css('top', 530);
+
+    $('.rocket').remove();  // remove all rockets
+    $('.asteroid').remove();  // remove all asteroids
+
+
+    //reset scores
+     rocketLauchedCounter = 0; 
+     asteroidsHitCounter = 0; 
+    gwhScore.html(0);
+    gwhAccuracy.html(0 + "%");
+}
 
 
 function initializeAsteroidsAutoSpawn(e)
@@ -321,7 +374,7 @@ function checkCollisions() {
 
       if(!removeLife())
       {
-        ship.remove();
+        ship.hide();
 
        // Hide primary windows
         gwhGame.hide();

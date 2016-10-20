@@ -43,8 +43,11 @@
 .lives-window {
   height: 11px;
   width: 100%;
-  background:blue;
   position: absolute;
   top:0px;
+}
 
+.splash-window{
+  text-align: center;
+  color:blue;
 }

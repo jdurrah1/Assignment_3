@@ -43,6 +43,14 @@ var KEYS = {
   spacebar: 32
 }
 
+var GameStates = 
+{
+  notStated:0,
+  Started:1, 
+  GameOver:2
+}
+
+var gameState = GameStates.notStated; 
 
 ////  Functional Code  ////
 
@@ -70,14 +78,23 @@ $(document).ready( function() {
 
 
 
-  intializeLifes();
-  initializeAsteroidsAutoSpawn();
+ 
 
   // Periodically check for collisions (instead of checking every position-update)
   setInterval( function() {
     checkCollisions();  // Remove elements if there are collisions
   }, 100);
 
+
+  $("#startGame-button").click(function()
+  {
+    $(".splash-window").fadeOut(); 
+      intializeLifes();
+      initializeAsteroidsAutoSpawn();
+
+      gameState=GameStates.Started; 
+
+  });
     //hide show settings panel 
   $("#showHideSettings-button").click(function()
   {
@@ -113,9 +130,9 @@ $(document).ready( function() {
   {
     x = $("#spawnInterval-box").val();
       var e = parseFloat(x);
-      if((!(e>=.2 & e<=4) | !isNaN(e)) & x!='')
+      if((!(e>=.2 & e<=4) | isNaN(e)) & x.length!=0)
       {
-        alert('spawn interval must in the following range: [0.2-4]'+ e);
+        alert('spawn interval must in the following range: [0.2-4] '+ e);
       }
 
   });
@@ -347,73 +364,80 @@ function getRandomColor() {
 
 // Handle asteroid creation events
 function createAsteroid() {
-  console.log('Spawning asteroid...');
 
-  // NOTE: source - http://www.clipartlord.com/wp-content/uploads/2016/04/aestroid.png
-  var asteroidDivStr = "<div id='a-" + asteroidIdx + "' class='asteroid'></div>"
-  // Add the rocket to the screen
-  gwhGame.append(asteroidDivStr);
-  // Create and asteroid handle based on newest index
-  var curAsteroid = $('#a-'+asteroidIdx);
+  if(gameState==GameStates.Started)
+  {
+    console.log('Spawning asteroid...');
 
-  asteroidIdx++;  // update the index to maintain uniqueness next time
+    // NOTE: source - http://www.clipartlord.com/wp-content/uploads/2016/04/aestroid.png
+    var asteroidDivStr = "<div id='a-" + asteroidIdx + "' class='asteroid'></div>"
+    // Add the rocket to the screen
+    gwhGame.append(asteroidDivStr);
+    // Create and asteroid handle based on newest index
+    var curAsteroid = $('#a-'+asteroidIdx);
 
-  // Set size of the asteroid (semi-randomized)
-  var astrSize = MIN_ASTEROID_SIZE + (Math.random() * (MAX_ASTEROID_SIZE - MIN_ASTEROID_SIZE));
-  curAsteroid.css('width', astrSize+"px");
-  curAsteroid.css('height', astrSize+"px");
-  curAsteroid.append("<img src='img/asteroid.png' height='" + astrSize + "'/>")
+    asteroidIdx++;  // update the index to maintain uniqueness next time
 
-  /* NOTE: This position calculation has been moved lower since verD -- this
-  **       allows us to adjust position more appropriately.
-  **/
-  // Pick a random starting position within the game window
-  var startingPosition = Math.random() * (gwhGame.width()-astrSize);  // Using 50px as the size of the asteroid (since no instance exists yet)
+    // Set size of the asteroid (semi-randomized)
+    var astrSize = MIN_ASTEROID_SIZE + (Math.random() * (MAX_ASTEROID_SIZE - MIN_ASTEROID_SIZE));
+    curAsteroid.css('width', astrSize+"px");
+    curAsteroid.css('height', astrSize+"px");
+    curAsteroid.append("<img src='img/asteroid.png' height='" + astrSize + "'/>")
 
-  // Set the instance-specific properties
-  curAsteroid.css('left', startingPosition+"px");
+    /* NOTE: This position calculation has been moved lower since verD -- this
+    **       allows us to adjust position more appropriately.
+    **/
+    // Pick a random starting position within the game window
+    var startingPosition = Math.random() * (gwhGame.width()-astrSize);  // Using 50px as the size of the asteroid (since no instance exists yet)
 
-  // Make the asteroids fall towards the bottom
-  setInterval( function() {
-    curAsteroid.css('top', parseInt(curAsteroid.css('top'))+ASTEROID_SPEED);
-    // Check to see if the asteroid has left the game/viewing window
-    if (parseInt(curAsteroid.css('top')) > (gwhGame.height() - curAsteroid.height())) {
-      curAsteroid.remove();
-    }
-  }, OBJECT_REFRESH_RATE);
+    // Set the instance-specific properties
+    curAsteroid.css('left', startingPosition+"px");
+
+    // Make the asteroids fall towards the bottom
+    setInterval( function() {
+      curAsteroid.css('top', parseInt(curAsteroid.css('top'))+ASTEROID_SPEED);
+      // Check to see if the asteroid has left the game/viewing window
+      if (parseInt(curAsteroid.css('top')) > (gwhGame.height() - curAsteroid.height())) {
+        curAsteroid.remove();
+      }
+    }, OBJECT_REFRESH_RATE);
+  }
 }
 
 // Handle "fire" [rocket] events
 function fireRocket() {
-  rocketLauchedCounter++;
-  console.log('Firing rocket...#', rocketLauchedCounter);
+  if(gameState==GameStates.Started)
+  {
+    rocketLauchedCounter++;
+    console.log('Firing rocket...#', rocketLauchedCounter);
 
-  //update accuracy
-  gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100) + "%");
+    //update accuracy
+    gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100) + "%");
 
-  // NOTE: source - https://www.raspberrypi.org/learning/microbit-game-controller/images/missile.png
-  var rocketDivStr = "<div id='r-" + rocketIdx + "' class='rocket'><img src='img/rocket.png'/></div>";
-  // Add the rocket to the screen
-  gwhGame.append(rocketDivStr);
-  // Create and rocket handle based on newest index
-  var curRocket = $('#r-'+rocketIdx);
-  rocketIdx++;  // update the index to maintain uniqueness next time
+    // NOTE: source - https://www.raspberrypi.org/learning/microbit-game-controller/images/missile.png
+    var rocketDivStr = "<div id='r-" + rocketIdx + "' class='rocket'><img src='img/rocket.png'/></div>";
+    // Add the rocket to the screen
+    gwhGame.append(rocketDivStr);
+    // Create and rocket handle based on newest index
+    var curRocket = $('#r-'+rocketIdx);
+    rocketIdx++;  // update the index to maintain uniqueness next time
 
-  // Set vertical position
-  curRocket.css('top', ship.css('top'));
-  // Set horizontal position
-  var rxPos = parseInt(ship.css('left')) + (ship.width()/2);  // In order to center the rocket, shift by half the div size (recall: origin [0,0] is top-left of div)
-  curRocket.css('left', rxPos+"px");
+    // Set vertical position
+    curRocket.css('top', ship.css('top'));
+    // Set horizontal position
+    var rxPos = parseInt(ship.css('left')) + (ship.width()/2);  // In order to center the rocket, shift by half the div size (recall: origin [0,0] is top-left of div)
+    curRocket.css('left', rxPos+"px");
 
-  // Create movement update handler
-  setInterval( function() {
-    curRocket.css('top', parseInt(curRocket.css('top'))-ROCKET_SPEED);
-    // Check to see if the rocket has left the game/viewing window
-    if (parseInt(curRocket.css('top')) < curRocket.height()) {
-      //curRocket.hide();
-      curRocket.remove();
-    }
-  }, OBJECT_REFRESH_RATE);
+    // Create movement update handler
+    setInterval( function() {
+      curRocket.css('top', parseInt(curRocket.css('top'))-ROCKET_SPEED);
+      // Check to see if the rocket has left the game/viewing window
+      if (parseInt(curRocket.css('top')) < curRocket.height()) {
+        //curRocket.hide();
+        curRocket.remove();
+      }
+    }, OBJECT_REFRESH_RATE);
+}
 }
 
 // Handle ship movement events

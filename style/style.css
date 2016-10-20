@@ -51,3 +51,22 @@
   text-align: center;
   color:blue;
 }
+
+.game-over
+{
+  float: left;
+  width:75px;
+  color: white;
+  position:absolute;
+  margin: 10px;
+  border-right: 3px solid #53f;
+}
+
+.game-over-panel
+{
+  text-align: center;
+  color:white;
+  position:relative;
+}
+
+

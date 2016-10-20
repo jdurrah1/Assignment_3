@@ -25,7 +25,7 @@ var SCORE_UNIT = 100;  // scoring is in 100-point units
 var maxShipPosX, maxShipPosY;
 
 // Global Window Handles (gwh__)
-var gwhGame, gwhOver, gwhStatus, gwhScore, gwhAccuracy,gwhLives;
+var gwhGame, gwhOver, gwhStatus, gwhScore, gwhAccuracy,gwhLives,gwhSplash;
 
 // Global Object Handles
 var ship;
@@ -47,7 +47,7 @@ var GameStates =
 {
   notStated:0,
   Started:1, 
-  GameOver:2
+  gameOver:2
 }
 
 var gameState = GameStates.notStated; 
@@ -66,6 +66,7 @@ $(document).ready( function() {
   gwhAccuracy = $('#accuracy-box');
   gwhLives = $('.lives-window')
   ship = $('#enterprise');  // set the global ship handle
+  gwhSplash = $(".splash-window");
 
   // Set global positions
   maxShipPosX = gwhGame.width() - ship.width();
@@ -85,14 +86,17 @@ $(document).ready( function() {
     checkCollisions();  // Remove elements if there are collisions
   }, 100);
 
+  intializeLifes();
+  $(".life").hide(); 
+  initializeAsteroidsAutoSpawn();
 
   $("#startGame-button").click(function()
   {
-    $(".splash-window").fadeOut(); 
-      intializeLifes();
-      initializeAsteroidsAutoSpawn();
+      gwhSplash.fadeOut(); 
+      
 
       gameState=GameStates.Started; 
+       $(".life").show(); 
 
   });
     //hide show settings panel 
@@ -124,6 +128,10 @@ $(document).ready( function() {
     intializeLifes(lifes); 
     initializeAsteroidsAutoSpawn(spawnInterval);
 
+    if(gameState!=GameStates.Started)
+      $(".life").hide(); 
+
+
   });
 
   $("#spawnInterval-box").focusout(function()
@@ -137,7 +145,60 @@ $(document).ready( function() {
 
   });
 
+
+  $("#restart-button").click(function()
+    {
+      restartGame(); 
+    });
+
 });
+
+
+function restartGame()
+{
+//hide game over 
+
+//show game window and other hidden windows
+
+//change game state to not started
+
+//initializeAsteroidAutoSpawn()
+
+//initializeLifes
+
+//put ship into initial position
+
+//destroy any and all asteroids
+
+
+    gwhGame.show();
+    gwhStatus.show();
+    gwhSplash.show(); 
+    $(".game-over-panel").hide();
+
+    // Show "Game Over" screen.
+    gameState=GameStates.notStated;
+    gwhOver.hide();
+
+    intializeLifes();
+    $(".life").hide(); 
+    initializeAsteroidsAutoSpawn();
+
+    //shipe inoriginal position
+      ship.show(); 
+      ship.css('left', 122);
+      ship.css('top', 530);
+
+    $('.rocket').remove();  // remove all rockets
+    $('.asteroid').remove();  // remove all asteroids
+
+
+    //reset scores
+     rocketLauchedCounter = 0; 
+     asteroidsHitCounter = 0; 
+    gwhScore.html(0);
+    gwhAccuracy.html(0 + "%");
+}
 
 
 function initializeAsteroidsAutoSpawn(e)
@@ -158,32 +219,33 @@ function initializeAsteroidsAutoSpawn(e)
 
 function randomSetIntervalForSpawn(e)
 {
+if(gameState==GameStates.Started)
+{
+    var halfInterval = e/2; 
+    var randomNumber = Math.random()*10;
+    var spawnInterval; 
 
-  var halfInterval = e/2; 
-  var randomNumber = Math.random()*10;
-  var spawnInterval; 
+    if(setIntervalIDSpawn !=0)
+    {
+      clearInterval(setIntervalIDSpawn);
+    }
 
-  if(setIntervalIDSpawn !=0)
-  {
-    clearInterval(setIntervalIDSpawn);
+    if(randomNumber >6)
+    {
+      spawnInterval= (e-halfInterval); 
+    }
+    else if (randomNumber >3)
+    {
+      spawnInterval = (e); 
+    }
+    else
+    {
+      spawnInterval= (e+halfInterval); 
+    }
+
+    setIntervalIDSpawn = setInterval(createAsteroid, 1000/(spawnInterval)); 
+    console.log("Spawn Interval: " + spawnInterval);
   }
-
-  if(randomNumber >6)
-  {
-    spawnInterval= (e-halfInterval); 
-  }
-  else if (randomNumber >3)
-  {
-    spawnInterval = (e); 
-  }
-  else
-  {
-    spawnInterval= (e+halfInterval); 
-  }
-
-  setIntervalIDSpawn = setInterval(createAsteroid, 1000/(spawnInterval)); 
-  console.log("Spawn Interval: " + spawnInterval);
-
 
 }
 
@@ -313,17 +375,32 @@ function checkCollisions() {
 
       if(!removeLife())
       {
-        ship.remove();
-
-        // Hide primary windows
-        gwhGame.hide();
-        gwhStatus.hide();
-
-        // Show "Game Over" screen
-        gwhOver.show();
+        gameOver();
       }
     }
   });
+}
+
+
+function gameOver()
+{
+    ship.hide();
+
+   // Hide primary windows
+   // gwhGame.hide();
+   $(".game-over-panel").show();
+    gwhStatus.hide();
+
+    // Show "Game Over" screen.
+    gameState=GameStates.gameOver;
+    gwhOver.show();
+
+    //add gameoverStates
+    $("#final_Score").html($("#score-box").html());
+    $("#final_Accuracy").html($("#accuracy-box").html());
+    
+
+
 }
 
 // Check if two objects are colliding

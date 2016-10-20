@@ -174,6 +174,7 @@ function restartGame()
     gwhGame.show();
     gwhStatus.show();
     gwhSplash.show(); 
+    $(".game-over-panel").hide();
 
     // Show "Game Over" screen.
     gameState=GameStates.notStated;
@@ -374,18 +375,32 @@ function checkCollisions() {
 
       if(!removeLife())
       {
-        ship.hide();
-
-       // Hide primary windows
-        gwhGame.hide();
-        gwhStatus.hide();
-
-        // Show "Game Over" screen.
-        gameState=GameStates.gameOver;
-        gwhOver.show();
+        gameOver();
       }
     }
   });
+}
+
+
+function gameOver()
+{
+    ship.hide();
+
+   // Hide primary windows
+   // gwhGame.hide();
+   $(".game-over-panel").show();
+    gwhStatus.hide();
+
+    // Show "Game Over" screen.
+    gameState=GameStates.gameOver;
+    gwhOver.show();
+
+    //add gameoverStates
+    $("#final_Score").html($("#score-box").html());
+    $("#final_Accuracy").html($("#accuracy-box").html());
+    
+
+
 }
 
 // Check if two objects are colliding

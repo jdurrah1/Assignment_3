@@ -4,6 +4,8 @@
 var rocketIdx = 1;
 var asteroidIdx = 1;
 var lifeIdx = 0;
+var setIntervalIDSpawn = 0; 
+var setIntervalIDSpawn2 = 0; 
 
 var rocketLauchedCounter = 0; 
 var asteroidsHitCounter = 0; 
@@ -99,24 +101,71 @@ $(document).ready( function() {
     var lifes = parseInt($("#lives-box").val());
     console.log("you enter " + lifes + " lives");
 
-    var spawnInterval = parseInt($("#spawnInterval-box").val());
+    var spawnInterval = parseFloat($("#spawnInterval-box").val());
     console.log("you enter spanning interval " + spawnInterval);
 
     intializeLifes(lifes); 
-    initializeAsteroidsAutoSpawn(lifes);
-
+    initializeAsteroidsAutoSpawn(spawnInterval);
 
   });
+
+  $("#spawnInterval-box").focusout(function()
+  {
+    x = $("#spawnInterval-box").val();
+      var e = parseFloat(x);
+      if((!(e>=.2 & e<=4) | !isNaN(e)) & x!='')
+      {
+        alert('spawn interval must in the following range: [0.2-4]'+ e);
+      }
+
+  });
+
 });
 
 
 function initializeAsteroidsAutoSpawn(e)
 {
 
-  if(e>=0.2 & e<=4)
-    setInterval(createAsteroid, 1000*e); 
+  if(setIntervalIDSpawn2 !=0)
+    clearInterval(setIntervalIDSpawn2);
+
+  if(e>=.2 & e<=4)
+    {
+      setIntervalIDSpawn2 = setInterval(function(){randomSetIntervalForSpawn(e)}, 1000/(e-e*0.6)); 
+    }
   else 
-    setInterval(createAsteroid, 1000); 
+  {
+    setIntervalIDSpawn2 = setInterval(function(){randomSetIntervalForSpawn(1)}, 1000/(0.4)); 
+  }
+}
+
+function randomSetIntervalForSpawn(e)
+{
+
+  var halfInterval = e/2; 
+  var randomNumber = Math.random()*10;
+  var spawnInterval; 
+
+  if(setIntervalIDSpawn !=0)
+  {
+    clearInterval(setIntervalIDSpawn);
+  }
+
+  if(randomNumber >6)
+  {
+    spawnInterval= (e-halfInterval); 
+  }
+  else if (randomNumber >3)
+  {
+    spawnInterval = (e); 
+  }
+  else
+  {
+    spawnInterval= (e+halfInterval); 
+  }
+
+  setIntervalIDSpawn = setInterval(createAsteroid, 1000/(spawnInterval)); 
+  console.log("Spawn Interval: " + spawnInterval);
 
 
 }

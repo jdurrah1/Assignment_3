@@ -251,7 +251,7 @@ function initializeAsteroidsAutoSpawn(e)
     }
   else 
   {
-    //setIntervalIDSpawn2 = setInterval(function(){randomSetIntervalForSpawn(1)}, 1000/(0.4)); 
+    setIntervalIDSpawn2 = setInterval(function(){randomSetIntervalForSpawn(1)}, 1000/(0.4)); 
   }
 }
 
@@ -568,7 +568,7 @@ function fireRocket() {
     curRocket.css('top', ship.css('top'));
     // Set horizontal position
     var rxPos = parseInt(ship.css('left')) + (ship.width()/2);  // In order to center the rocket, shift by half the div size (recall: origin [0,0] is top-left of div)
-    curRocket.css('left', rxPos+"px");
+    curRocket.css('left', (rxPos-10)+"px");
 
     // Create movement update handler
     setInterval( function() {

@@ -9,6 +9,7 @@ var setIntervalIDSpawn2 = 0;
 
 var rocketLauchedCounter = 0; 
 var asteroidsHitCounter = 0; 
+var asteroidCounter =0; 
 
 var lives = 3; 
 
@@ -34,6 +35,9 @@ var gwhGame, gwhOver, gwhStatus, gwhScore, gwhAccuracy,gwhLives,gwhSplash;
 
 // Global Object Handles
 var ship;
+
+var shieldSpawnRate = 10; 
+
 
 /*
  * This is a handy little container trick: use objects as constants to collect
@@ -113,6 +117,7 @@ $(document).ready( function() {
   initializeAsteroidsAutoSpawn();
   initializeSounds();
   playSound(SOUNDS.intro);
+  setShieldSpawnRate();
 
   
 
@@ -147,10 +152,14 @@ $(document).ready( function() {
   {
     $("#showHideSettings-button").trigger('click'); 
     var lifes = parseInt($("#lives-box").val());
-    console.log("you enter " + lifes + " lives");
+    //console.log("you enter " + lifes + " lives");
 
     var spawnInterval = parseFloat($("#spawnInterval-box").val());
-    console.log("you enter spanning interval " + spawnInterval);
+    //console.log("you enter spanning interval " + spawnInterval);
+
+    shieldSpawnRate = parseInt($("#shield-box").val()); 
+
+    setShieldSpawnRate(); 
 
     intializeLifes(lifes); 
     initializeAsteroidsAutoSpawn(spawnInterval);
@@ -188,6 +197,41 @@ $(document).ready( function() {
     });
 
 });
+
+
+function setShieldSpawnRate()
+{
+        //check gups
+      if(gup("itemRate")!=null)
+      {
+        var itemRate = parseInt(gup("itemRate")) ;
+        if(itemRate<0 | isNaN(itemRate))
+        {
+          alert("url parameter for life rejected")
+        }
+        else
+          shieldSpawnRate = itemRate;
+      }
+      
+      else
+      {
+        x = $("#shield-box").val();
+        var e = parseInt(x);
+        if((!(e>=0) | isNaN(e)) & x.length!=0)
+        {
+          alert('Shield spawn rate must be 0 or greater: '+ e);
+          shieldSpawnRate = 10; 
+        }
+        else if (x.length==0)
+        {
+          shieldSpawnRate = 10; 
+        }
+        else
+        { 
+          shieldSpawnRate = e; 
+        }
+    }
+}
 
 
 function restartGame()
@@ -251,7 +295,7 @@ function initializeAsteroidsAutoSpawn(e)
     }
   else 
   {
-    setIntervalIDSpawn2 = setInterval(function(){randomSetIntervalForSpawn(1)}, 1000/(0.4)); 
+     setIntervalIDSpawn2 = setInterval(function(){randomSetIntervalForSpawn(1)}, 1000/(0.4)); 
   }
 }
 
@@ -295,15 +339,17 @@ function intializeLifes(e){
 
   }
 
-  //check gups
+
+      //check gups
   if(gup("life")!=null)
   {
-    if(gup("life")<0 | gup("life") >10) 
+    var itemRate = parseInt(gup("life")) ;
+    if(itemRate<0 | isNaN(itemRate))
     {
-      console.log("url parameter for life rejected")
+      alert("url parameter for life rejected")
     }
     else
-      lives = gup("life");
+      lives = itemRate;
   }
   else if(e>0 & e <11)
   {
@@ -409,7 +455,7 @@ function checkCollisions() {
       // For each rocket and asteroid, check for collisions
       if (isColliding(curRocket,curAsteroid)) {
         asteroidsHitCounter++;
-        console.log("Asteroid #", asteroidsHitCounter, " Hit!");
+        //console.log("Asteroid #", asteroidsHitCounter, " Hit!");
         
         // If a rocket and asteroid collide, destroy both
         curRocket.remove();
@@ -428,20 +474,60 @@ function checkCollisions() {
   // Next, check for asteroid-ship interactions
   $('.asteroid').each( function() {
     var curAsteroid = $(this);
-    if (isColliding(curAsteroid, ship)) {
-      // Remove all game elements
-      addExplosition();
-      $('.rocket').remove();  // remove all rockets
-      $('.asteroid').remove();  // remove all asteroids
+    if (isColliding(curAsteroid, ship) & !isShieldOn()) {
 
-      if(!removeLife())
+      if(curAsteroid.hasClass('shield')) //hit shield
       {
-        gameOver();
+        curAsteroid.remove();
+        //add shield to ship
+        addShield();
+
       }
-    }
+      else //hit asteroid
+      {
+          // Remove all game elements
+          addExplosition();
+          $('.rocket').remove();  // remove all rockets
+          $('.asteroid').remove();  // remove all asteroids
+
+          if(!removeLife())
+          {
+            gameOver();
+          }
+        }
+      }
+      else if (isColliding(curAsteroid, ship) & isShieldOn() ) //hit and asteroid and shield is on
+      {
+        addExplosition();
+        curAsteroid.remove();
+        removeShield();
+
+      }
   });
 }
 
+function addShield()
+{
+  ship.addClass('shield');
+  ship.append(("<img id='shieldID' src='img/shield.png'  />"));
+
+  $(".ship-avatar").css('position', 'absolute');
+}
+
+function removeShield()
+{
+  ship.removeClass('shield');
+  $("#shieldID").remove();
+  $(".ship-avatar").css('position', 'relative');
+}
+
+function isShieldOn()
+{
+  if(ship.hasClass('shield'))
+    return true
+  
+  return false; 
+}
 
 function gameOver()
 {
@@ -502,12 +588,12 @@ function getRandomColor() {
   return '#' + (Math.random()*0xFFFFFF<<0).toString(16);
 }
 
-// Handle asteroid creation events
+// Handle asteroid or shield creation events 
 function createAsteroid() {
 
   if(gameState==GameStates.Started)
   {
-    console.log('Spawning asteroid...');
+    //console.log('Spawning asteroid...');
 
     // NOTE: source - http://www.clipartlord.com/wp-content/uploads/2016/04/aestroid.png
     var asteroidDivStr = "<div id='a-" + asteroidIdx + "' class='asteroid'></div>"
@@ -522,7 +608,20 @@ function createAsteroid() {
     var astrSize = MIN_ASTEROID_SIZE + (Math.random() * (MAX_ASTEROID_SIZE - MIN_ASTEROID_SIZE));
     curAsteroid.css('width', astrSize+"px");
     curAsteroid.css('height', astrSize+"px");
-    curAsteroid.append("<img src='img/asteroid.png' height='" + astrSize + "'/>")
+
+    if(asteroidCounter<shieldSpawnRate)
+    {
+      curAsteroid.append("<img src='img/asteroid.png' height='" + astrSize + "'/>")
+      asteroidCounter++;
+    }
+    else
+    {
+      asteroidCounter =0;
+      curAsteroid.append("<img src='img/shield.png' height='" + astrSize + "'/>")
+      //add shield to class
+      curAsteroid.addClass('shield');
+
+    }
 
     /* NOTE: This position calculation has been moved lower since verD -- this
     **       allows us to adjust position more appropriately.
@@ -551,7 +650,7 @@ function fireRocket() {
     playSound(SOUNDS.rocketLaunch);
 
     rocketLauchedCounter++;
-    console.log('Firing rocket...#', rocketLauchedCounter);
+    //console.log('Firing rocket...#', rocketLauchedCounter);
 
     //update accuracy
     gwhAccuracy.html(Math.round((asteroidsHitCounter/rocketLauchedCounter)*100) + "%");

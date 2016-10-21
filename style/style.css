@@ -5,6 +5,7 @@
   width: 500px;
   background: #eee;
   border: 5px solid #ccc;
+  z-index: -3;
   
 }
 .game-window {
@@ -27,8 +28,9 @@
 .ship {
   top: 530px;
   left: 122px;
-  position: relative;
+  position: absolute;
   display: inline-block;
+  z-index:3;
 }
 .rocket {
   position: absolute;
@@ -74,5 +76,6 @@
   position: relative;
   
 }
+
 
 

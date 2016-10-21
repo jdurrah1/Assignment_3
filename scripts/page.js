@@ -12,6 +12,11 @@ var asteroidsHitCounter = 0;
 
 var lives = 3; 
 
+var rocketSound;
+var shipAsteroidCSound;
+var gameOverSound;
+var introSound;
+
 // Size Constants
 var MAX_ASTEROID_SIZE = 50;
 var MIN_ASTEROID_SIZE = 15;
@@ -45,10 +50,10 @@ var KEYS = {
 
 var SOUNDS = 
 {
-  rocketLaunch: 0;
-  shipAsteroidC:1;
-  gameOver:2;
-  intro:3;
+  rocketLaunch: 0,
+  shipAsteroidC:1,
+  gameOver:2,
+  intro:3
 
 }
 
@@ -89,7 +94,7 @@ $(document).ready( function() {
 
 
  
-  playSound(SOUNDS.intro);
+
   // Periodically check for collisions (instead of checking every position-update)
   setInterval( function() {
     checkCollisions();  // Remove elements if there are collisions
@@ -98,6 +103,8 @@ $(document).ready( function() {
   intializeLifes();
   $(".life").hide(); 
   initializeAsteroidsAutoSpawn();
+  initializeSounds();
+  playSound(SOUNDS.intro);
 
   $("#startGame-button").click(function()
   {
@@ -210,24 +217,7 @@ function restartGame()
 }
 
 
-function playSound(e)
-{
 
-  switch (e)
-  {
-    case SOUNDS.rocketLaunch:
-     break;
-    case SOUNDS.shipAsteroidC:
-     break;
-    case SOUNDS.gameOver:
-     break;
-    case SOUNDS.intro:
-      break;
-    default:
-      console.log("incorrect sound"); 
-      break;
-  }
-}
 
 function initializeAsteroidsAutoSpawn(e)
 {
@@ -583,4 +573,51 @@ function moveShip(arrow) {
       ship.css('top', newPos);
     break;
   }
+}
+
+function playSound(e)
+{
+
+  switch (e)
+  {
+    case SOUNDS.rocketLaunch:
+      rocketSound.play();
+     break;
+    case SOUNDS.shipAsteroidC:
+       shipAsteroidCSound.play();
+     break;
+    case SOUNDS.gameOver:
+      gameOverSound.play();
+     break;
+    case SOUNDS.intro:
+      introSound.play(); 
+      break;
+    default:
+      console.log("incorrect sound"); 
+      break;
+  }
+}
+
+function initializeSounds()
+{
+  rocketSound = new sound("audio/rocket.wav");
+  shipAsteroidCSound =new sound("audio/explode.wav");
+  gameOverSound= new sound("audio/gameover.wav");
+  introSound = new sound("audio/intro.mp3");
+}
+
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
 }

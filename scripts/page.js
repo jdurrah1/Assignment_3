@@ -64,6 +64,14 @@ var GameStates =
   gameOver:2
 }
 
+var SoundStates = 
+{
+  muted:0, 
+  unmuted:1
+}
+
+var soundState = SoundStates.muted; 
+
 var gameState = GameStates.notStated; 
 
 ////  Functional Code  ////
@@ -144,9 +152,18 @@ $(document).ready( function() {
     intializeLifes(lifes); 
     initializeAsteroidsAutoSpawn(spawnInterval);
 
-    if(gameState!=GameStates.Started)
+    if(gameState!=GameStates.Started) //lifes should be hidden initially until the game starts
       $(".life").hide(); 
 
+    if($("#mute-box").is(':checked'))
+    {
+      soundState = SoundStates.muted;
+      stopAllSounds();
+    }
+    else
+    {
+      soundState = SoundStates.unmuted; 
+    }
 
   });
 
@@ -578,24 +595,35 @@ function moveShip(arrow) {
 function playSound(e)
 {
 
-  switch (e)
+  if(soundState == SoundStates.unmuted)
   {
-    case SOUNDS.rocketLaunch:
-      rocketSound.play();
-     break;
-    case SOUNDS.shipAsteroidC:
-       shipAsteroidCSound.play();
-     break;
-    case SOUNDS.gameOver:
-      gameOverSound.play();
-     break;
-    case SOUNDS.intro:
-      introSound.play(); 
-      break;
-    default:
-      console.log("incorrect sound"); 
-      break;
+    switch (e)
+    {
+      case SOUNDS.rocketLaunch:
+        rocketSound.play();
+       break;
+      case SOUNDS.shipAsteroidC:
+         shipAsteroidCSound.play();
+       break;
+      case SOUNDS.gameOver:
+        gameOverSound.play();
+       break;
+      case SOUNDS.intro:
+        introSound.play(); 
+        break;
+      default:
+        console.log("incorrect sound"); 
+        break;
+    }
   }
+}
+
+function stopAllSounds()
+{
+  rocketSound.stop();
+  gameOverSound.stop();
+  shipAsteroidCSound.stop();
+  introSound.stop(); 
 }
 
 function initializeSounds()

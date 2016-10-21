@@ -114,6 +114,9 @@ $(document).ready( function() {
   initializeSounds();
   playSound(SOUNDS.intro);
 
+  
+
+
   $("#startGame-button").click(function()
   {
       gwhSplash.fadeOut(); 
@@ -248,7 +251,7 @@ function initializeAsteroidsAutoSpawn(e)
     }
   else 
   {
-    setIntervalIDSpawn2 = setInterval(function(){randomSetIntervalForSpawn(1)}, 1000/(0.4)); 
+    //setIntervalIDSpawn2 = setInterval(function(){randomSetIntervalForSpawn(1)}, 1000/(0.4)); 
   }
 }
 
@@ -334,8 +337,29 @@ function addLife()
 
 }
 
+function addExplosition()
+{
+    var explositionDivStr = "<div id='e-" + 1 + "' class='explosition'><img src='img/explosion.png'/></div>";
+    // Add the rocket to the screen
+    gwhGame.append(explositionDivStr);
+    // Create and rocket handle based on newest index
+    var curExplosition = $('#e-'+1);
+
+
+
+
+    // Set vertical position
+   curExplosition.css('top', parseInt(ship.css('top')) - 50 +'px' );
+    // Set horizontal position
+   //var rxPos = parseInt(ship.css('left')) + (ship.width()/2);  // In order to center the rocket, shift by half the div size (recall: origin [0,0] is top-left of div)
+   curExplosition.css('left', ship.css('left'));
+
+   setTimeout(function(){$('#e-'+1).remove()}, 1000);
+}
+
 function removeLife()
 {
+  
   if(lifeIdx>0)
   {
     playSound(SOUNDS.shipAsteroidC); 
@@ -406,7 +430,7 @@ function checkCollisions() {
     var curAsteroid = $(this);
     if (isColliding(curAsteroid, ship)) {
       // Remove all game elements
-      
+      addExplosition();
       $('.rocket').remove();  // remove all rockets
       $('.asteroid').remove();  // remove all asteroids
 

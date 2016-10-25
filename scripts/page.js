@@ -387,20 +387,22 @@ function addExplosition()
 {
     var explositionDivStr = "<div id='e-" + 1 + "' class='explosition'><img src='img/explosion.png'/></div>";
     // Add the rocket to the screen
-    gwhGame.append(explositionDivStr);
+    //gwhGame.append(explositionDivStr);
     // Create and rocket handle based on newest index
+    ship.append(explositionDivStr);
     var curExplosition = $('#e-'+1);
+    $(".ship-avatar").css('position', 'absolute');
 
 
 
 
     // Set vertical position
-   curExplosition.css('top', parseInt(ship.css('top')) - 50 +'px' );
+   //curExplosition.css('top', parseInt(ship.css('top')) - 50 +'px' );
     // Set horizontal position
    //var rxPos = parseInt(ship.css('left')) + (ship.width()/2);  // In order to center the rocket, shift by half the div size (recall: origin [0,0] is top-left of div)
-   curExplosition.css('left', ship.css('left'));
-
-   setTimeout(function(){$('#e-'+1).remove()}, 1000);
+   //curExplosition.css('left', ship.css('left'));
+   curExplosition.css('position', 'absolute');
+   setTimeout(function(){$('#e-'+1).remove(); $(".ship-avatar").css('position', 'relative');}, 1000);
 }
 
 function removeLife()
@@ -498,9 +500,10 @@ function checkCollisions() {
       }
       else if (isColliding(curAsteroid, ship) & isShieldOn() ) //hit and asteroid and shield is on
       {
-        addExplosition();
+        
         curAsteroid.remove();
         removeShield();
+        //addExplosition();
 
       }
   });

@@ -54,21 +54,22 @@
 
 .game-over
 {
-  float: left;
-  width:75px;
-  color: white;
-  position:absolute;
-  margin: 10px;
-  border-right: 3px solid #53f;
-}
 
+  text-align: center;
+  color: blue;
+  margin: 10px;  
+  position:absolute;
+  left:75px;
+
+}
+/*
 .game-over-panel
 {
   text-align: center;
   color:white;
   position:relative;
 }
-
+*/
 .explosition
 {
   position: relative;

@@ -104,7 +104,7 @@ $(document).ready( function() {
   //$(window).keydown(createAsteroid);
 
 
-
+  setInterval(function(){createAsteroid(1);}, 10000);
  
 
   // Periodically check for collisions (instead of checking every position-update)
@@ -592,7 +592,7 @@ function getRandomColor() {
 }
 
 // Handle asteroid or shield creation events 
-function createAsteroid() {
+function createAsteroid(e) {
 
   if(gameState==GameStates.Started)
   {
@@ -612,7 +612,11 @@ function createAsteroid() {
     curAsteroid.css('width', astrSize+"px");
     curAsteroid.css('height', astrSize+"px");
 
-    if(asteroidCounter<shieldSpawnRate)
+    if(e==1)
+    {
+      curAsteroid.append("<img src='img/fireball.png' height='" + 40 + "'/>")
+    }
+    else if(asteroidCounter<shieldSpawnRate)
     {
       curAsteroid.append("<img src='img/asteroid.png' height='" + astrSize + "'/>")
       asteroidCounter++;
